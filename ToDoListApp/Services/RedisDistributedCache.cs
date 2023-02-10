@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace ToDoListApp.Services
 {
+    /// <summary>
+    /// This class is for using distributed cache - Redis
+    /// </summary>
     public class RedisCacheService : IRedisCacheService
     {
         private readonly IDistributedCache _cache;

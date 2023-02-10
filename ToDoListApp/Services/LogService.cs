@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ToDoListApp.Services
 {
+    /// <summary>
+    /// This class handles log methods
+    /// </summary>
     public class LogService: ILogService
     {
         private readonly ILogger _logger;

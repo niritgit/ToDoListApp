@@ -34,6 +34,11 @@ namespace ToDoListApp.Contracts
             return GetTasksActionResult(res);
         }
 
+        /// <summary>
+        /// Create tasks - add new tasks to database.
+        /// </summary>
+        /// <param name="newTasks">new tasks</param>
+        /// <returns></returns>
         [HttpPost]
         [Route("CreateTask")]
         public async Task<IActionResult> CreateTask(TaskToDo[] newTasks)
@@ -42,6 +47,11 @@ namespace ToDoListApp.Contracts
             return GetActionResult(res);
         }
 
+        /// <summary>
+        /// Update tasks - update tasks in database.
+        /// </summary>
+        /// <param name="modifiedTasks">tasks with changes</param>
+        /// <returns></returns>
         [HttpPut]
         [Route("UpdateTask")]
         public async Task<IActionResult> UpdateTask(TaskToDo[] modifiedTasks)
@@ -50,6 +60,11 @@ namespace ToDoListApp.Contracts
             return GetActionResult(res);
         }
 
+        /// <summary>
+        /// Delete tasks - delete tasks from database.
+        /// </summary>
+        /// <param name="tasks">tasks to be deleted</param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("DeleteTask")]
         public async Task<IActionResult> DeleteTask(TaskToDo[] tasks)
@@ -58,6 +73,11 @@ namespace ToDoListApp.Contracts
             return GetActionResult(res);
         }
 
+        /// <summary>
+        /// Get action result contains HTTP status code and suitable msg/error responses.
+        /// </summary>
+        /// <param name="res"></param>
+        /// <returns></returns>
         private IActionResult GetActionResult(TasksToDoStatusResponse res)
         {
             if (res.StatusCode != (int)HttpStatusCode.OK)
@@ -72,6 +92,11 @@ namespace ToDoListApp.Contracts
             }
         }
 
+        /// <summary>
+        /// Get action result contains HTTP status code and suitable msg/error responses and also list of relevant tasks.
+        /// </summary>
+        /// <param name="res"></param>
+        /// <returns></returns>
         private IActionResult GetTasksActionResult(TaskToDoListResponse res)
         {
             if (res != null && res.TasksToDoStatus != null

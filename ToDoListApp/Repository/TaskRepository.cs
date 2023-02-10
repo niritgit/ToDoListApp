@@ -14,7 +14,7 @@ using ToDoListApp.Services;
 
 namespace ToDoListApp.Repository
 {
-    //Repository handling task operations
+    //Repository handling task actions
     public class TaskRepository : ITaskRepository
     {
         private readonly TaskToDoContext _dbContext;
@@ -63,9 +63,13 @@ namespace ToDoListApp.Repository
             }
            
             return new TasksToDoStatusResponse() { StatusCode = (int)HttpStatusCode.BadRequest, Msg = "Please provide tasks" };
-
         }
 
+        /// <summary>
+        /// Delete tasks - deleting them from the database using Entity Framework.
+        /// </summary>
+        /// <param name="tasksToDelete">tasks to be deleted</param>
+        /// <returns></returns>
         public async Task<TasksToDoStatusResponse> DeleteTask(TaskToDo[] tasksToDelete)
         {
             if (tasksToDelete != null && tasksToDelete.Length > 0)
@@ -91,13 +95,16 @@ namespace ToDoListApp.Repository
                         ErrorMsg = $"Delete Task Exception: {ex.Message}" 
                     };
                 }
-                
             }
 
-            return new TasksToDoStatusResponse() { StatusCode = (int)HttpStatusCode.BadRequest, Msg="Please provide tasks" };
-
+            return new TasksToDoStatusResponse() { StatusCode = (int)HttpStatusCode.BadRequest, Msg="Please provide tasks to delete" };
         }
 
+        /// <summary>
+        /// Update tasks - updating them in database using Entity Framework.
+        /// </summary>
+        /// <param name="tasksModified"></param>
+        /// <returns></returns>
         public async Task<TasksToDoStatusResponse> UpdateTask(TaskToDo[] tasksModified)
         {
             if (tasksModified != null && tasksModified.Length > 0)
@@ -119,9 +126,14 @@ namespace ToDoListApp.Repository
                 
             } 
 
-            return new TasksToDoStatusResponse() { StatusCode = (int)HttpStatusCode.BadRequest, Msg = "Please provide tasks" };
+            return new TasksToDoStatusResponse() { StatusCode = (int)HttpStatusCode.BadRequest, Msg = "Please provide tasks to update" };
         }
 
+        /// <summary>
+        /// Get tasks - support pagination for reading a list of tasks.
+        /// </summary>
+        /// <param name="tasksParameters"></param>
+        /// <returns></returns>
         public TaskToDoListResponse GetTasks(TasksParameters tasksParameters)
         {
             return GetTasksByPaging((tasksParameters.PageNumber - 1) * tasksParameters.PageSize, tasksParameters.PageSize);
@@ -138,7 +150,7 @@ namespace ToDoListApp.Repository
                     var cachedTasksByPaging = _redisCache.Get<List<TaskToDo>>($"tasksSkip{skip}take{take}");
                     string msgRetrieved = "data retrieved successfully";
 
-                    if (cachedTasksByPaging != null)
+                    if (cachedTasksByPaging != null)// return cache saved tasks (for req page number and page size)
                         return new TaskToDoListResponse() { 
                             Tasks = cachedTasksByPaging, 
                             TasksToDoStatus = new TasksToDoStatusResponse() { StatusCode = (int)HttpStatusCode.OK, Msg = msgRetrieved } 
@@ -146,12 +158,13 @@ namespace ToDoListApp.Repository
                     else
                     {
                         //not in cache- retrieve from DB:
+                        //It is recommended to do pagination in DB (ant not in code) to improve performance, therefore call sp GetTasksByPaging
                         var param1 = new SqlParameter("@Skip", skip);
                         var param2 = new SqlParameter("@Take", take);
                         list = _dbContext.TasksToDo.FromSqlRaw("GetTasksByPaging {0}, {1}", new SqlParameter[] { param1, param2 }).ToList<TaskToDo>();
                         
                         if (list != null)
-                            _redisCache.Set<List<TaskToDo>>($"tasksSkip{skip}take{take}", list);
+                            _redisCache.Set<List<TaskToDo>>($"tasksSkip{skip}take{take}", list);//lets now cache these results.
 
                         return new TaskToDoListResponse()
                         {
@@ -182,6 +195,11 @@ namespace ToDoListApp.Repository
             
         }
 
+        /// <summary>
+        /// Get tasks description for relevant tasks
+        /// </summary>
+        /// <param name="tasks">relevant tasks</param>
+        /// <returns></returns>
         private string GetTasksDescription(TaskToDo[] tasks)
         {
             StringBuilder sb = new StringBuilder();

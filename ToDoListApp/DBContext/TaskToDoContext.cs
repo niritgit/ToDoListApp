@@ -7,6 +7,9 @@ using ToDoListApp.Models;
 
 namespace ToDoListApp.DBContext
 {
+    /// <summary>
+    /// DbContext for to do tasks
+    /// </summary>
     public class TaskToDoContext: DbContext
     {
         public TaskToDoContext(DbContextOptions<TaskToDoContext> options) : base(options)
