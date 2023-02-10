@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ToDoListApp.Contracts
 {
+    /// <summary>
+    /// Do Pagination
+    /// </summary>
     public class TasksParameters
     {
         const int maxPageSize = 50;
