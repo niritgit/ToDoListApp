@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ToDoListApp.Contracts
 {
     /// <summary>
-    /// Do Pagination
+    /// This class is for pagination - it has page size and page number.
     /// </summary>
     public class TasksParameters
     {
