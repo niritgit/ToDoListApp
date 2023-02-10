@@ -139,6 +139,13 @@ namespace ToDoListApp.Repository
             return GetTasksByPaging((tasksParameters.PageNumber - 1) * tasksParameters.PageSize, tasksParameters.PageSize);
         }
 
+        /// <summary>
+        /// Get tasks by paging using skip and take parameters. 
+        /// It uses Redis cache. If tasks are not in cache it retrieves them from database and update cache.
+        /// </summary>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
+        /// <returns></returns>
         private TaskToDoListResponse GetTasksByPaging(int skip, int take)
         {
             List<TaskToDo> list = new List<TaskToDo>();
